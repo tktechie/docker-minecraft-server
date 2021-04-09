@@ -2,9 +2,6 @@ FROM adoptopenjdk/openjdk11:alpine-jre
 
 LABEL org.opencontainers.image.authors="Geoff Bourne <itzgeoff@gmail.com>"
 
-# upgrade all packages since alpine jre8 base image tops out at 8u212
-RUN apk -U --no-cache upgrade
-
 RUN apk add --no-cache -U \
   openssl \
   imagemagick \
@@ -51,7 +48,7 @@ RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
  --from https://github.com/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
 
 RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
- --var version=0.7.0 --var app=mc-monitor --file {{.app}} \
+ --var version=0.7.1 --var app=mc-monitor --file {{.app}} \
  --from https://github.com/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
 
 RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
@@ -68,6 +65,8 @@ VOLUME ["/data"]
 COPY server.properties /tmp/server.properties
 COPY log4j2.xml /tmp/log4j2.xml
 WORKDIR /data
+
+STOPSIGNAL SIGTERM
 
 ENV UID=1000 GID=1000 \
   JVM_XX_OPTS="-XX:+UseG1GC" MEMORY="1G" \
